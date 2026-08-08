@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bild-Vokabeltrainer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            align-items: center;
+            background: #eef2ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        select, input[type="text"], button {
+            font-size: 16px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        #game-area {
+            text-align: center;
+            padding: 6px;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        #game-area.mode-learning {
+            background: linear-gradient(135deg, #eff6ff, #f8fbff);
+            border: 1px solid #bfdbfe;
+        }
+
+        #game-area.mode-testing {
+            background: linear-gradient(135deg, #fff7ed, #fffbeb);
+            border: 1px solid #fed7aa;
+        }
+
+        .game-card {
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .mode-banner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .mode-banner.learning {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .mode-banner.testing {
+            background: #fde68a;
+            color: #92400e;
+        }
+
+        #image-display {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 8px;
+        }
+
+        #answer-form {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        #input-field {
+            min-width: 240px;
+        }
+
+        #feedback {
+            min-height: 26px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        .correct {
+            color: #15803d;
+        }
+
+        .incorrect {
+            color: #dc2626;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 20px;
+            color: #2563eb;
+            margin-top: 4px;
+        }
+
+        .streak-message {
+            min-height: 24px;
+            margin-top: 8px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .mode-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .results-card {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .results-card h2 {
+            margin-top: 0;
+            color: #1d4ed8;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .user-results-section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .user-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .user-results-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .user-results-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vokabeltrainer</h1>
+
+        <div class="options">
+            <label>
+                Benutzername:
+                <input type="text" id="username-input" placeholder="Dein Name" autocomplete="off">
+            </label>
+
+            <label>
+                Kategorie:
+                <select id="category-select">
+                    <option value="all">Alle Kategorien</option>
+                    <option value="legumes">Les légumes</option>
+                    <option value="fruits">Les fruits</option>
+                    <option value="spices">Les épices</option>
+                    <option value="herbs">Les herbes aromatiques</option>
+                </select>
+            </label>
+
+            <div class="mode-group">
+                <label><input type="radio" name="mode" value="learning" checked> Lernmodus</label>
+                <label><input type="radio" name="mode" value="testing"> Testmodus</label>
+            </div>
+        </div>
+
+        <div id="game-area"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div>Fragen gesamt</div>
+                <strong id="counter-total">0</strong>
+            </div>
+            <div class="stat-card">
+                <div>Richtig</div>
+                <strong id="counter-correct">0</strong>
+            </div>
+            <div class="stat-card">
+                <div>Falsch</div>
+                <strong id="counter-incorrect">0</strong>
+            </div>
+            <div class="stat-card">
+                <div>Note</div>
+                <strong id="current-grade">-</strong>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <button id="reset-button" type="button">Trainer zurücksetzen</button>
+            <button id="finish-button" class="btn-secondary" type="button">Beenden & Ergebnis anzeigen</button>
+            <button id="show-results-button" class="btn-secondary" type="button">Ergebnisse ansehen</button>
+        </div>
+
+        <div id="user-results-section" class="user-results-section" style="display: none;"></div>
+    </div>
+
+    <script>
+        const legumes = [
+            "pics/les légumes/la betterave.png",
+            "pics/les légumes/la carotte.png",
+            "pics/les légumes/la courgette.png",
+            "pics/les légumes/la laitue.png",
+            "pics/les légumes/la patate douce.png",
+            "pics/les légumes/la pomme de terre.png",
+            "pics/les légumes/la tomate.png",
+            "pics/les légumes/le brocoli.png",
+            "pics/les légumes/le chou de Bruxelles.png",
+            "pics/les légumes/le chou-fleur.png",
+            "pics/les légumes/le chou.png",
+            "pics/les légumes/le concombre.png",
+            "pics/les légumes/le céleri.png",
+            "pics/les légumes/le haricot vert.png",
+            "pics/les légumes/le petit pois.png",
+            "pics/les légumes/le poireau.png",
+            "pics/les légumes/le poivron.png",
+            "pics/les légumes/le potiron.png",
+            "pics/les légumes/le radis.png",
+            "pics/les légumes/les épinards.png",
+            "pics/les légumes/l\'ail.png",
+            "pics/les légumes/l\'artichaut.png",
+            "pics/les légumes/l\'aubergine.png",
+            "pics/les légumes/l\'oignon.png"
+        ];
+
+        const fruits = [
+            "pics/les fruits/la banane.png",
+            "pics/les fruits/la cerise.png",
+            "pics/les fruits/la fraise.png",
+            "pics/les fruits/la framboise.png",
+            "pics/les fruits/la grenade.png",
+            "pics/les fruits/la mangue.png",
+            "pics/les fruits/la myrtille.png",
+            "pics/les fruits/la mûre.png",
+            "pics/les fruits/la papaye.png",
+            "pics/les fruits/la pastèque.png",
+            "pics/les fruits/la poire.png",
+            "pics/les fruits/la pomme.png",
+            "pics/les fruits/la prune.png",
+            "pics/les fruits/la pêche.png",
+            "pics/les fruits/le cassis.png",
+            "pics/les fruits/le citron vert.png",
+            "pics/les fruits/le citron.png",
+            "pics/les fruits/le kaki.png",
+            "pics/les fruits/le kiwi.png",
+            "pics/les fruits/le melon.png",
+            "pics/les fruits/le raisin.png",
+            "pics/les fruits/l\'abricot.png",
+            "pics/les fruits/l\'ananas.png",
+            "pics/les fruits/l\'orange.png"
+        ];
+
+        const spices = [
+            "pics/les épices/la cannelle.png",
+            "pics/les épices/la cardamome.png",
+            "pics/les épices/la coriandre.png",
+            "pics/les épices/le laurier.png",
+            "pics/les épices/la moutarde.png",
+            "pics/les épices/la muscade.png",
+            "pics/les épices/le sésame noire.png",
+            "pics/les épices/la vanille.png",
+            "pics/les épices/le basilic.png",
+            "pics/les épices/le clou de girofle.png",
+            "pics/les épices/le cumin.png",
+            "pics/les épices/le curcuma.png",
+            "pics/les épices/le curry.png",
+            "pics/les épices/le fenouil.png",
+            "pics/les épices/le gingembre.png",
+            "pics/les épices/le paprika.png",
+            "pics/les épices/le poivre.png",
+            "pics/les épices/le piment.png",
+            "pics/les épices/le romarin.png",
+            "pics/les épices/le safran.png",
+            "pics/les épices/le thym.png",
+            "pics/les épices/l\'ail.png",
+            "pics/les épices/l\'anis étoilé.png",
+            "pics/les épices/l\'origan.png",
+        ];
+
+        const herbs = [
+			"pics/les herbes aromatiques/la ciboulette.png",
+			"pics/les herbes aromatiques/la citronnelle.png",
+			"pics/les herbes aromatiques/la coriandre.png",
+			"pics/les herbes aromatiques/la lavande.png",
+			"pics/les herbes aromatiques/la livèche.png",
+			"pics/les herbes aromatiques/la marjolaine.png",
+			"pics/les herbes aromatiques/la menthe.png",
+			"pics/les herbes aromatiques/la mélisse.png",
+			"pics/les herbes aromatiques/la roquette.png",
+			"pics/les herbes aromatiques/la sarriette.png",
+			"pics/les herbes aromatiques/la sauge.png",
+			"pics/les herbes aromatiques/le basilic.png",
+			"pics/les herbes aromatiques/le cerfeuil.png",
+			"pics/les herbes aromatiques/le céleri perpétuel.png",
+			"pics/les herbes aromatiques/le laurier-sauce.png",
+			"pics/les herbes aromatiques/le laurier.png",
+			"pics/les herbes aromatiques/le persil.png",
+			"pics/les herbes aromatiques/le romarin.png",
+			"pics/les herbes aromatiques/le shiso.png",
+			"pics/les herbes aromatiques/le thym citron.png",
+			"pics/les herbes aromatiques/le thym.png",
+			"pics/les herbes aromatiques/l\'aneth.png",
+			"pics/les herbes aromatiques/l\'estragon.png",
+			"pics/les herbes aromatiques/l\'origan.png",
+        ];
+
+        let currentCategory = "all";
+        let currentMode = "learning";
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let totalCount = 0;
+        let isBlocked = false;
+        let isSessionActive = true;
+        let imageItems = [];
+        let pendingItems = [];
+        let currentItem = null;
+        let lastShownPath = null;
+
+        let imageDisplay;
+        let inputField;
+        let feedbackElement;
+        let streakMessageElement;
+        let counterCorrectElement;
+        let counterIncorrectElement;
+        let counterTotalElement;
+        let currentGradeElement;
+        let categorySelect;
+        let answerForm;
+        let playButton;
+        let finishButton;
+        let modeInputs;
+        let gameArea;
+        let usernameInput;
+        let userResultsSection;
+        let showResultsButton;
+
+        function getImagesForCategory(selection) {
+            if (selection === "legumes") {
+                return [...legumes];
+            }
+            if (selection === "fruits") {
+                return [...fruits];
+            }
+            if (selection === "spices") {
+                return [...spices];
+            }
+            if (selection === "herbs") {
+                return [...herbs];
+            }
+            return [...legumes, ...fruits, ...spices, ...herbs];
+        }
+
+        function getStorageKey() {
+            const username = (usernameInput?.value || "").trim().toLowerCase() || "guest";
+            return `vokabeltrainer-progress-${username}`;
+        }
+
+        function loadProgress() {
+            try {
+                const savedProgress = localStorage.getItem(getStorageKey());
+                return savedProgress ? JSON.parse(savedProgress) : {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function saveProgress() {
+            const progress = {};
+            imageItems.forEach((item) => {
+                progress[item.path] = {
+                    priority: item.priority,
+                    streak: item.streak,
+                    learned: item.learned
+                };
+            });
+            localStorage.setItem(getStorageKey(), JSON.stringify(progress));
+        }
+
+        function buildImageItems(selection) {
+            const paths = getImagesForCategory(selection);
+            const savedProgress = loadProgress();
+            return paths.map((path) => {
+                const savedItem = savedProgress[path] || {};
+                return {
+                    path,
+                    priority: savedItem.priority || 0,
+                    streak: savedItem.streak || 0,
+                    learned: Boolean(savedItem.learned)
+                };
+            });
+        }
+
+        function shuffleItems(items) {
+            const shuffledItems = [...items];
+            shuffledItems.sort(() => Math.random() - 0.5);
+            return shuffledItems;
+        }
+
+        function getSolution(filePath) {
+            const fileName = filePath.split('/').pop();
+            return fileName.split('.').slice(0, -1).join('.');
+        }
+
+        function calculateGrade() {
+            if (totalCount === 0) return "-";
+            const successRate = (correctCount / totalCount) * 100;
+
+            if (successRate >= 91) return "1";
+            if (successRate >= 81) return "2";
+            if (successRate >= 71) return "3";
+            if (successRate >= 61) return "4";
+            if (successRate >= 50) return "5";
+            return "6";
+        }
+
+        function updateStats() {
+            counterCorrectElement.textContent = correctCount;
+            counterIncorrectElement.textContent = incorrectCount;
+            counterTotalElement.textContent = totalCount;
+            currentGradeElement.textContent = calculateGrade();
+        }
+
+        function updateStreakMessage() {
+            if (!streakMessageElement) {
+                return;
+            }
+            if (!currentItem || currentItem.streak < 2) {
+                streakMessageElement.textContent = "";
+                return;
+            }
+            streakMessageElement.textContent = `Super! ${currentItem.streak} richtige in Folge 🔥`;
+        }
+
+        function renderGameArea() {
+            const isTestingMode = currentMode === "testing";
+            gameArea.className = isTestingMode ? "mode-testing" : "mode-learning";
+            gameArea.innerHTML = `
+                <div class="game-card">
+                    <div class="mode-banner ${isTestingMode ? "testing" : "learning"}">
+                        ${isTestingMode ? "🧪 Testmodus – direkt antworten" : "📘 Lernmodus – hör dir die Lösung an und prüfe sie"}
+                    </div>
+                    <img id="image-display" src="" alt="Vokabel Bild">
+                    ${isTestingMode ? "" : '<button id="play-button" type="button" class="btn-secondary">🔊 Vorlesen</button>'}
+                    <br>
+                    <form id="answer-form" action="javascript:void(0);">
+                        <input type="text" id="input-field" placeholder="Antwort hier eintippen..." autocomplete="off" autofocus>
+                        <button type="submit">Prüfen</button>
+                    </form>
+                    <div id="feedback"></div>
+                    <div id="streak-message" class="streak-message"></div>
+                </div>
+            `;
+        }
+
+        function bindGameElements() {
+            imageDisplay = document.getElementById("image-display");
+            inputField = document.getElementById("input-field");
+            feedbackElement = document.getElementById("feedback");
+            streakMessageElement = document.getElementById("streak-message");
+            answerForm = document.getElementById("answer-form");
+            playButton = document.getElementById("play-button");
+
+            answerForm.addEventListener("submit", handleAnswer);
+            if (playButton) {
+                playButton.addEventListener("click", speakCurrentSolution);
+            }
+        }
+
+        function updateModeControls() {
+            finishButton.style.display = currentMode === "learning" ? "inline-block" : "none";
+        }
+
+        function buildPendingItems(items) {
+            const queue = [];
+            const pool = [...items];
+            let previousPath = null;
+
+            while (pool.length > 0) {
+                const candidates = pool.filter((item) => item.path !== previousPath);
+                const availableCandidates = candidates.length > 0 ? candidates : pool;
+                const selectedIndex = Math.floor(Math.random() * availableCandidates.length);
+                const selectedItem = availableCandidates[selectedIndex];
+
+                queue.push(selectedItem);
+                previousPath = selectedItem.path;
+                pool.splice(pool.indexOf(selectedItem), 1);
+            }
+
+            return queue;
+        }
+
+        function pickNextItem() {
+            const availableItems = imageItems.filter((item) => !item.learned && item.path !== lastShownPath);
+            if (!availableItems.length) {
+                const fallbackItems = imageItems.filter((item) => !item.learned);
+                if (!fallbackItems.length) {
+                    return null;
+                }
+                return fallbackItems[Math.floor(Math.random() * fallbackItems.length)];
+            }
+
+            const highestPriority = Math.max(...availableItems.map((item) => item.priority));
+            const priorityItems = availableItems.filter((item) => item.priority === highestPriority);
+            const weightedItems = [];
+
+            priorityItems.forEach((item) => {
+                const weight = Math.max(1, 4 - item.priority);
+                for (let index = 0; index < weight; index += 1) {
+                    weightedItems.push(item);
+                }
+            });
+
+            return weightedItems[Math.floor(Math.random() * weightedItems.length)];
+        }
+
+        function loadNextImage() {
+            if (!isSessionActive) {
+                return;
+            }
+
+            if (currentMode === "testing") {
+                if (!pendingItems.length) {
+                    showFinalResults();
+                    return;
+                }
+                currentItem = pendingItems.shift();
+            } else {
+                currentItem = pickNextItem();
+                if (!currentItem) {
+                    showFinalResults();
+                    return;
+                }
+            }
+
+            lastShownPath = currentItem.path;
+            imageDisplay.src = currentItem.path;
+            inputField.value = "";
+            if (streakMessageElement) {
+                streakMessageElement.textContent = "";
+            }
+            inputField.focus();
+            isBlocked = false;
+        }
+
+        function speakCurrentSolution() {
+            if (!imageItems.length || currentMode !== "learning" || !currentItem) {
+                return;
+            }
+
+            if (!("speechSynthesis" in window)) {
+                feedbackElement.textContent = "Sprachsynthese wird in diesem Browser nicht unterstützt.";
+                feedbackElement.className = "incorrect";
+                return;
+            }
+
+            const solution = getSolution(currentItem.path);
+            const utterance = new SpeechSynthesisUtterance(solution);
+            utterance.lang = "fr-FR";
+            utterance.rate = 0.9;
+
+            const voices = window.speechSynthesis.getVoices();
+            const frenchVoice = voices.find((voice) => voice.lang === "fr-FR") || voices.find((voice) => voice.lang.startsWith("fr"));
+            if (frenchVoice) {
+                utterance.voice = frenchVoice;
+            }
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function handleAnswer(event) {
+            event.preventDefault();
+            if (!isSessionActive || isBlocked || !inputField || !currentItem) {
+                return;
+            }
+
+            const userInput = inputField.value.trim().toLowerCase();
+            const correctAnswer = getSolution(currentItem.path).toLowerCase();
+
+            isBlocked = true;
+            totalCount++;
+
+            if (userInput === correctAnswer) {
+                feedbackElement.textContent = "Richtig! 🎉";
+                feedbackElement.className = "correct";
+                correctCount++;
+                currentItem.streak += 1;
+                currentItem.priority = Math.max(0, currentItem.priority - 1);
+                if (currentItem.streak >= 2) {
+                    currentItem.learned = true;
+                }
+                updateStreakMessage();
+            } else {
+                feedbackElement.textContent = `Falsch! Richtig: ${getSolution(currentItem.path)}`;
+                feedbackElement.className = "incorrect";
+                incorrectCount++;
+                currentItem.streak = 0;
+                currentItem.priority += 2;
+                if (streakMessageElement) {
+                    streakMessageElement.textContent = "Noch ein Versuch – du schaffst es!";
+                }
+            }
+
+            saveProgress();
+            updateStats();
+
+            if (currentMode === "testing" && pendingItems.length === 0 && currentItem.learned === false) {
+                setTimeout(() => {
+                    showFinalResults();
+                }, 800);
+                return;
+            }
+
+            setTimeout(() => {
+                feedbackElement.textContent = "";
+                feedbackElement.className = "";
+                if (streakMessageElement) {
+                    streakMessageElement.textContent = "";
+                }
+                loadNextImage();
+            }, 800);
+        }
+
+        function showFinalResults() {
+            isSessionActive = false;
+            gameArea.innerHTML = `
+                <div class="results-card">
+                    <h2>Fertig!</h2>
+                    <p>Dein Ergebnis für diesen Durchgang:</p>
+                    <div class="result-row"><span>Fragen gesamt:</span><strong>${totalCount}</strong></div>
+                    <div class="result-row"><span>Richtig:</span><strong>${correctCount}</strong></div>
+                    <div class="result-row"><span>Falsch:</span><strong>${incorrectCount}</strong></div>
+                    <div class="result-row"><span>Note:</span><strong>${calculateGrade()}</strong></div>
+                    <div class="results-actions">
+                        <button id="repeat-button" type="button">Wiederholen</button>
+                        <button id="new-round-button" class="btn-secondary" type="button">Neuen Durchgang starten</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById("repeat-button").addEventListener("click", resetTrainer);
+            document.getElementById("new-round-button").addEventListener("click", resetTrainer);
+            feedbackElement = null;
+            streakMessageElement = null;
+            inputField = null;
+            answerForm = null;
+            playButton = null;
+        }
+
+        function selectCategory() {
+            currentCategory = categorySelect.value;
+            resetTrainer();
+        }
+
+        function changeMode(event) {
+            currentMode = event.target.value;
+            resetTrainer();
+        }
+
+        function handleUsernameChange() {
+            localStorage.setItem("vokabeltrainer-last-username", usernameInput.value.trim());
+            resetTrainer();
+        }
+
+        function resetTrainer() {
+            currentItem = null;
+            correctCount = 0;
+            incorrectCount = 0;
+            totalCount = 0;
+            isBlocked = false;
+            isSessionActive = true;
+            imageItems = buildImageItems(currentCategory);
+            pendingItems = currentMode === "testing" ? buildPendingItems(imageItems) : [];
+            lastShownPath = null;
+
+            updateStats();
+            renderGameArea();
+            bindGameElements();
+            updateModeControls();
+            loadNextImage();
+        }
+
+        function getStoredUsernames() {
+            const usernames = [];
+            for (let index = 0; index < localStorage.length; index += 1) {
+                const key = localStorage.key(index);
+                if (key && key.startsWith("vokabeltrainer-progress-")) {
+                    const username = key.replace("vokabeltrainer-progress-", "");
+                    usernames.push(username);
+                }
+            }
+            return usernames.sort();
+        }
+
+        function renderUserResults() {
+            const usernames = getStoredUsernames();
+            if (!usernames.length) {
+                userResultsSection.innerHTML = "<p>Keine gespeicherten Nutzer vorhanden.</p>";
+                userResultsSection.style.display = "block";
+                return;
+            }
+
+            userResultsSection.innerHTML = `
+                <h3>Gespeicherte Ergebnisse</h3>
+                <div class="user-results-list">
+                    ${usernames.map((username) => {
+                        const progress = JSON.parse(localStorage.getItem(`vokabeltrainer-progress-${username}`) || "{}") || {};
+                        const items = Object.values(progress);
+                        const totalEntries = items.length;
+                        const learnedCount = items.filter((item) => item.learned).length;
+                        const averagePriority = totalEntries ? (items.reduce((sum, item) => sum + (item.priority || 0), 0) / totalEntries).toFixed(1) : "0.0";
+                        return `
+                            <div class="user-results-item">
+                                <strong>${username}</strong>
+                                <div class="user-results-actions">
+                                    <button type="button" class="btn-secondary" data-user="${username}" data-action="view">Anzeigen</button>
+                                    <button type="button" class="btn-secondary" data-user="${username}" data-action="reset">Reset</button>
+                                </div>
+                                <div style="width: 100%; color: #4b5563; font-size: 14px;">
+                                    Einträge: ${totalEntries} · Gelernt: ${learnedCount} · Priorität: ${averagePriority}
+                                </div>
+                            </div>
+                        `;
+                    }).join("")}
+                </div>
+            `;
+            userResultsSection.style.display = "block";
+
+            userResultsSection.querySelectorAll("button[data-action='view']").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const selectedUsername = button.getAttribute("data-user");
+                    const progress = JSON.parse(localStorage.getItem(`vokabeltrainer-progress-${selectedUsername}`) || "{}") || {};
+                    const progressItems = Object.entries(progress).slice(0, 8);
+                    let detailText = `Benutzer: ${selectedUsername}\n`;
+                    if (!progressItems.length) {
+                        detailText += "Noch keine Fortschritte gespeichert.";
+                    } else {
+                        detailText += progressItems.map(([path, data]) => `${path}: priorität=${data.priority}, streak=${data.streak}, gelernt=${data.learned}`).join("\n");
+                    }
+                    alert(detailText);
+                });
+            });
+
+            userResultsSection.querySelectorAll("button[data-action='reset']").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const selectedUsername = button.getAttribute("data-user");
+                    if (confirm(`Ergebnisse von ${selectedUsername} wirklich löschen?`)) {
+                        localStorage.removeItem(`vokabeltrainer-progress-${selectedUsername}`);
+                        renderUserResults();
+                    }
+                });
+            });
+        }
+
+        function toggleUserResults() {
+            if (userResultsSection.style.display === "block") {
+                userResultsSection.style.display = "none";
+                return;
+            }
+            renderUserResults();
+        }
+
+        function bindControls() {
+            categorySelect = document.getElementById("category-select");
+            categorySelect.addEventListener("change", selectCategory);
+
+            usernameInput = document.getElementById("username-input");
+            usernameInput.value = localStorage.getItem("vokabeltrainer-last-username") || "";
+            usernameInput.addEventListener("change", handleUsernameChange);
+            usernameInput.addEventListener("blur", handleUsernameChange);
+
+            modeInputs = document.querySelectorAll('input[name="mode"]');
+            modeInputs.forEach((input) => input.addEventListener("change", changeMode));
+
+            finishButton = document.getElementById("finish-button");
+            finishButton.addEventListener("click", () => {
+                if (!isSessionActive) {
+                    return;
+                }
+                showFinalResults();
+            });
+
+            document.getElementById("reset-button").addEventListener("click", resetTrainer);
+            showResultsButton = document.getElementById("show-results-button");
+            showResultsButton.addEventListener("click", toggleUserResults);
+            userResultsSection = document.getElementById("user-results-section");
+            gameArea = document.getElementById("game-area");
+            counterCorrectElement = document.getElementById("counter-correct");
+            counterIncorrectElement = document.getElementById("counter-incorrect");
+            counterTotalElement = document.getElementById("counter-total");
+            currentGradeElement = document.getElementById("current-grade");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            bindControls();
+            resetTrainer();
+        });
+    </script>
+</body>
+</html>
