@@ -264,7 +264,20 @@ function loadNextImage() {
     currentItem = pendingItems.shift();
 
     lastShownPath = currentItem.path;
-    imageDisplay.src = currentItem.path;
+    // Ensure path is URI-encoded so spaces and accents don't break loading
+    try {
+        imageDisplay.src = encodeURI(currentItem.path);
+    } catch (e) {
+        imageDisplay.src = currentItem.path;
+    }
+    imageDisplay.alt = getSolution(currentItem.path);
+    imageDisplay.onerror = () => {
+        if (feedbackElement) {
+            feedbackElement.textContent = 'Bild konnte nicht geladen werden.';
+            feedbackElement.className = 'incorrect';
+        }
+        console.error('Failed to load image:', currentItem.path);
+    };
     inputField.value = "";
     if (streakMessageElement) {
         streakMessageElement.textContent = "";
