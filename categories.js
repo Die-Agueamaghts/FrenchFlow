@@ -20,7 +20,6 @@ const CATEGORIES = {
     "pics/les couverts les verres et la vaisselle/le plat rectangulaire.png",
     "pics/les couverts les verres et la vaisselle/le poivrier.png",
     "pics/les couverts les verres et la vaisselle/le pot à lait.png",
-    "pics/les couverts les verres et la vaisselle/les couverts les verres et la vaisselle.png",
     "pics/les couverts les verres et la vaisselle/le saladier.png",
     "pics/les couverts les verres et la vaisselle/la salière.png",
     "pics/les couverts les verres et la vaisselle/la saucière.png",
@@ -90,7 +89,6 @@ const CATEGORIES = {
     "pics/les organes internes/le pancréas.png",
     "pics/les organes internes/la rate.png",
     "pics/les organes internes/les intestins.png",
-    "pics/les organes internes/les organes internes.png",
     "pics/les organes internes/les poumons.png",
     "pics/les organes internes/les reins.png",
     "pics/les organes internes/la vésicule biliaire.png",
@@ -124,10 +122,12 @@ const CATEGORIES = {
     "pics/les légumes/la tomate.png",
   ],
   les_categories: [
+    "pics/les catégories/les couverts les verres et la vaisselle.png",
     "pics/les catégories/les épices.png",
     "pics/les catégories/les fruits.png",
     "pics/les catégories/les herbes aromatiques.png",
     "pics/les catégories/les légumes.png",
+    "pics/les catégories/les organes internes.png",
   ],
   spices: [
     "pics/les épices/l'ail.png",
