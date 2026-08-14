@@ -1,0 +1,245 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+h1 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    align-items: center;
+    background: #eef2ff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+select, input[type="text"], button {
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.control-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+#game-area {
+    text-align: center;
+    padding: 6px;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+}
+
+#game-area.mode-learning {
+    background: linear-gradient(135deg, #eff6ff, #f8fbff);
+    border: 1px solid #bfdbfe;
+}
+
+#game-area.mode-testing {
+    background: linear-gradient(135deg, #fff7ed, #fffbeb);
+    border: 1px solid #fed7aa;
+}
+
+.game-card {
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.mode-banner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.mode-banner.learning {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.mode-banner.testing {
+    background: #fde68a;
+    color: #92400e;
+}
+
+#image-display {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 8px;
+}
+
+#answer-form {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+#input-field {
+    min-width: 240px;
+}
+
+#feedback {
+    min-height: 26px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.correct {
+    color: #15803d;
+}
+
+.incorrect {
+    color: #dc2626;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 20px;
+    color: #2563eb;
+    margin-top: 4px;
+}
+
+.streak-message {
+    min-height: 24px;
+    margin-top: 8px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.mode-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.results-card {
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.results-card h2 {
+    margin-top: 0;
+    color: #1d4ed8;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.results-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.user-results-section {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    display: none;
+}
+
+.user-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.user-results-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.user-results-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
