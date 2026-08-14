@@ -269,6 +269,7 @@
                     <option value="fruits">Les fruits</option>
                     <option value="spices">Les épices</option>
                     <option value="herbs">Les herbes aromatiques</option>
+                    <option value="inner_organs">Les organes internes</option>
                 </select>
             </label>
 
@@ -303,6 +304,7 @@
             <button id="reset-button" type="button">Trainer zurücksetzen</button>
             <button id="finish-button" class="btn-secondary" type="button">Beenden & Ergebnis anzeigen</button>
             <button id="show-results-button" class="btn-secondary" type="button">Ergebnisse ansehen</button>
+            <button id="clear-results-button" class="btn-secondary" type="button">Ergebnisse löschen</button>
         </div>
 
         <div id="user-results-section" class="user-results-section" style="display: none;"></div>
@@ -417,6 +419,22 @@
 			"pics/les herbes aromatiques/l\'origan.png",
         ];
 
+        const inner_organs = [
+			"pics/les organes internes/l'estomac.png",
+            "pics/les organes internes/l'œsophage.png",
+            "pics/les organes internes/la rate.png",
+            "pics/les organes internes/la vessie.png",
+            "pics/les organes internes/la vésicule biliaire.png",
+            "pics/les organes internes/le cerveau.png",
+            "pics/les organes internes/le cœur.png",
+            "pics/les organes internes/le foie.png",
+            "pics/les organes internes/le pancréas.png",
+            "pics/les organes internes/les intestins.png",
+            "pics/les organes internes/les organes internes.png",
+            "pics/les organes internes/les poumons.png",
+            "pics/les organes internes/les reins.png"
+        ];
+
         let currentCategory = "all";
         let currentMode = "learning";
         let correctCount = 0;
@@ -428,6 +446,7 @@
         let pendingItems = [];
         let currentItem = null;
         let lastShownPath = null;
+        let currentRunSessionCounted = false;
 
         let imageDisplay;
         let inputField;
@@ -446,6 +465,7 @@
         let usernameInput;
         let userResultsSection;
         let showResultsButton;
+        let clearResultsButton;
 
         function getImagesForCategory(selection) {
             if (selection === "legumes") {
@@ -460,12 +480,20 @@
             if (selection === "herbs") {
                 return [...herbs];
             }
-            return [...legumes, ...fruits, ...spices, ...herbs];
+            if (selection === "inner_organs") {
+                return [...inner_organs];
+            }   
+            return [...legumes, ...fruits, ...spices, ...herbs, ...inner_organs];
         }
 
         function getStorageKey() {
             const username = (usernameInput?.value || "").trim().toLowerCase() || "guest";
             return `vokabeltrainer-progress-${username}`;
+        }
+
+        function getResultsStorageKey(usernameOverride) {
+            const username = (usernameOverride || usernameInput?.value || "").trim().toLowerCase() || "guest";
+            return `vokabeltrainer-results-${username}`;
         }
 
         function loadProgress() {
@@ -487,6 +515,44 @@
                 };
             });
             localStorage.setItem(getStorageKey(), JSON.stringify(progress));
+        }
+
+        function loadUserResults(usernameOverride) {
+            try {
+                const savedResults = localStorage.getItem(getResultsStorageKey(usernameOverride));
+                return savedResults ? JSON.parse(savedResults) : { correct: 0, incorrect: 0, sessions: 0, lastUpdated: null };
+            } catch (error) {
+                return { correct: 0, incorrect: 0, sessions: 0, lastUpdated: null };
+            }
+        }
+
+        function saveUserResults(results, usernameOverride) {
+            localStorage.setItem(getResultsStorageKey(usernameOverride), JSON.stringify(results));
+        }
+
+        function updateUserResultStats(isCorrect) {
+            const username = (usernameInput?.value || "").trim().toLowerCase() || "guest";
+            const results = loadUserResults(username);
+            if (isCorrect) {
+                results.correct += 1;
+            } else {
+                results.incorrect += 1;
+            }
+            results.lastUpdated = new Date().toISOString();
+            saveUserResults(results, username);
+        }
+
+        function recordSessionStart() {
+            if (currentRunSessionCounted) {
+                return;
+            }
+
+            currentRunSessionCounted = true;
+            const username = (usernameInput?.value || "").trim().toLowerCase() || "guest";
+            const results = loadUserResults(username);
+            results.sessions += 1;
+            results.lastUpdated = new Date().toISOString();
+            saveUserResults(results, username);
         }
 
         function buildImageItems(selection) {
@@ -691,12 +757,14 @@
             const correctAnswer = getSolution(currentItem.path).toLowerCase();
 
             isBlocked = true;
+            recordSessionStart();
             totalCount++;
 
             if (userInput === correctAnswer) {
                 feedbackElement.textContent = "Richtig! 🎉";
                 feedbackElement.className = "correct";
                 correctCount++;
+                updateUserResultStats(true);
                 currentItem.streak += 1;
                 currentItem.priority = Math.max(0, currentItem.priority - 1);
                 if (currentItem.streak >= 2) {
@@ -707,6 +775,7 @@
                 feedbackElement.textContent = `Falsch! Richtig: ${getSolution(currentItem.path)}`;
                 feedbackElement.className = "incorrect";
                 incorrectCount++;
+                updateUserResultStats(false);
                 currentItem.streak = 0;
                 currentItem.priority += 2;
                 if (streakMessageElement) {
@@ -750,8 +819,8 @@
                     </div>
                 </div>
             `;
-            document.getElementById("repeat-button").addEventListener("click", resetTrainer);
-            document.getElementById("new-round-button").addEventListener("click", resetTrainer);
+            document.getElementById("repeat-button").addEventListener("click", () => startNewSession());
+            document.getElementById("new-round-button").addEventListener("click", () => startNewSession());
             feedbackElement = null;
             streakMessageElement = null;
             inputField = null;
@@ -761,20 +830,27 @@
 
         function selectCategory() {
             currentCategory = categorySelect.value;
-            resetTrainer();
+            startNewSession();
         }
 
         function changeMode(event) {
             currentMode = event.target.value;
-            resetTrainer();
+            startNewSession();
         }
 
         function handleUsernameChange() {
-            localStorage.setItem("vokabeltrainer-last-username", usernameInput.value.trim());
-            resetTrainer();
+            const trimmedUsername = usernameInput.value.trim();
+            localStorage.setItem("vokabeltrainer-last-username", trimmedUsername);
+
+            if (!trimmedUsername) {
+                return;
+            }
+
+            startNewSession();
         }
 
-        function resetTrainer() {
+        function startNewSession() {
+            currentRunSessionCounted = false;
             currentItem = null;
             correctCount = 0;
             incorrectCount = 0;
@@ -792,16 +868,40 @@
             loadNextImage();
         }
 
+        function resetTrainer() {
+            const shouldClearAll = confirm(`Sollen wirklich alle gespeicherten Nutzer- und Ergebnisdaten gelöscht werden?`);
+
+            if (shouldClearAll) {
+                for (let index = 0; index < localStorage.length; index += 1) {
+                    const key = localStorage.key(index);
+                    if (key && (key.startsWith("vokabeltrainer-progress-") || key.startsWith("vokabeltrainer-results-"))) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                localStorage.removeItem("vokabeltrainer-last-username");
+                usernameInput.value = "";
+
+                if (userResultsSection) {
+                    userResultsSection.innerHTML = "<p>Keine gespeicherten Nutzer vorhanden.</p>";
+                    userResultsSection.style.display = "block";
+                }
+            }
+
+            startNewSession();
+        }
+
         function getStoredUsernames() {
-            const usernames = [];
+            const usernames = new Set();
             for (let index = 0; index < localStorage.length; index += 1) {
                 const key = localStorage.key(index);
                 if (key && key.startsWith("vokabeltrainer-progress-")) {
-                    const username = key.replace("vokabeltrainer-progress-", "");
-                    usernames.push(username);
+                    usernames.add(key.replace("vokabeltrainer-progress-", ""));
+                }
+                if (key && key.startsWith("vokabeltrainer-results-")) {
+                    usernames.add(key.replace("vokabeltrainer-results-", ""));
                 }
             }
-            return usernames.sort();
+            return [...usernames].sort();
         }
 
         function renderUserResults() {
@@ -816,20 +916,18 @@
                 <h3>Gespeicherte Ergebnisse</h3>
                 <div class="user-results-list">
                     ${usernames.map((username) => {
-                        const progress = JSON.parse(localStorage.getItem(`vokabeltrainer-progress-${username}`) || "{}") || {};
-                        const items = Object.values(progress);
-                        const totalEntries = items.length;
-                        const learnedCount = items.filter((item) => item.learned).length;
-                        const averagePriority = totalEntries ? (items.reduce((sum, item) => sum + (item.priority || 0), 0) / totalEntries).toFixed(1) : "0.0";
+                        const results = loadUserResults(username);
+                        const totalAnswers = results.correct + results.incorrect;
+                        const successRate = totalAnswers ? Math.round((results.correct / totalAnswers) * 100) : 0;
                         return `
                             <div class="user-results-item">
                                 <strong>${username}</strong>
                                 <div class="user-results-actions">
                                     <button type="button" class="btn-secondary" data-user="${username}" data-action="view">Anzeigen</button>
-                                    <button type="button" class="btn-secondary" data-user="${username}" data-action="reset">Reset</button>
+                                    <button type="button" class="btn-secondary" data-user="${username}" data-action="reset">Zurücksetzen</button>
                                 </div>
                                 <div style="width: 100%; color: #4b5563; font-size: 14px;">
-                                    Einträge: ${totalEntries} · Gelernt: ${learnedCount} · Priorität: ${averagePriority}
+                                    Richtig: ${results.correct} · Falsch: ${results.incorrect} · Gesamt: ${totalAnswers} · Trefferquote: ${successRate}% · Sitzungen: ${results.sessions || 0}
                                 </div>
                             </div>
                         `;
@@ -841,14 +939,18 @@
             userResultsSection.querySelectorAll("button[data-action='view']").forEach((button) => {
                 button.addEventListener("click", () => {
                     const selectedUsername = button.getAttribute("data-user");
-                    const progress = JSON.parse(localStorage.getItem(`vokabeltrainer-progress-${selectedUsername}`) || "{}") || {};
-                    const progressItems = Object.entries(progress).slice(0, 8);
-                    let detailText = `Benutzer: ${selectedUsername}\n`;
-                    if (!progressItems.length) {
-                        detailText += "Noch keine Fortschritte gespeichert.";
-                    } else {
-                        detailText += progressItems.map(([path, data]) => `${path}: priorität=${data.priority}, streak=${data.streak}, gelernt=${data.learned}`).join("\n");
-                    }
+                    const results = loadUserResults(selectedUsername);
+                    const totalAnswers = results.correct + results.incorrect;
+                    const successRate = totalAnswers ? Math.round((results.correct / totalAnswers) * 100) : 0;
+                    const detailText = [
+                        `Benutzer: ${selectedUsername}`,
+                        `Richtig: ${results.correct}`,
+                        `Falsch: ${results.incorrect}`,
+                        `Gesamt: ${totalAnswers}`,
+                        `Trefferquote: ${successRate}%`,
+                        `Sitzungen: ${results.sessions || 0}`,
+                        `Zuletzt aktualisiert: ${results.lastUpdated ? new Date(results.lastUpdated).toLocaleString("de-DE") : "Noch keine Ergebnisse"}`
+                    ].join("\n");
                     alert(detailText);
                 });
             });
@@ -856,8 +958,8 @@
             userResultsSection.querySelectorAll("button[data-action='reset']").forEach((button) => {
                 button.addEventListener("click", () => {
                     const selectedUsername = button.getAttribute("data-user");
-                    if (confirm(`Ergebnisse von ${selectedUsername} wirklich löschen?`)) {
-                        localStorage.removeItem(`vokabeltrainer-progress-${selectedUsername}`);
+                    if (confirm(`Ergebnisse von ${selectedUsername} wirklich zurücksetzen?`)) {
+                        localStorage.removeItem(getResultsStorageKey(selectedUsername));
                         renderUserResults();
                     }
                 });
@@ -870,6 +972,23 @@
                 return;
             }
             renderUserResults();
+        }
+
+        function clearCurrentUserResults() {
+            const username = (usernameInput?.value || "").trim().toLowerCase() || "guest";
+            if (!username) {
+                return;
+            }
+
+            if (!confirm(`Ergebnisse von ${username} wirklich löschen?`)) {
+                return;
+            }
+
+            localStorage.removeItem(getResultsStorageKey(username));
+            localStorage.removeItem(getStorageKey());
+            if (userResultsSection && userResultsSection.style.display === "block") {
+                renderUserResults();
+            }
         }
 
         function bindControls() {
@@ -895,6 +1014,8 @@
             document.getElementById("reset-button").addEventListener("click", resetTrainer);
             showResultsButton = document.getElementById("show-results-button");
             showResultsButton.addEventListener("click", toggleUserResults);
+            clearResultsButton = document.getElementById("clear-results-button");
+            clearResultsButton.addEventListener("click", clearCurrentUserResults);
             userResultsSection = document.getElementById("user-results-section");
             gameArea = document.getElementById("game-area");
             counterCorrectElement = document.getElementById("counter-correct");
@@ -905,7 +1026,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             bindControls();
-            resetTrainer();
+            startNewSession();
         });
     </script>
 </body>
