@@ -15,8 +15,38 @@
                 Benutzername:
                 <input type="text" id="username-input" placeholder="Dein Name" autocomplete="off">
             </label>
+
+            <label>
+                Kategorie:
+                <select id="category-select"></select>
+            </label>
+
+            <div class="mode-group">
+                <label><input type="radio" name="mode" value="learning" checked> Lernen</label>
+                <label><input type="radio" name="mode" value="testing"> Test</label>
+            </div>
+
+            <div class="control-row">
+                <button id="finish-button" class="btn-secondary">Beenden</button>
+                <button id="reset-button" class="btn-secondary">Zurücksetzen</button>
+                <button id="show-results-button" class="btn-secondary">Ergebnisse</button>
+                <button id="clear-results-button" class="btn-secondary">Löschen</button>
+            </div>
+        </div>
+
+        <div id="game-area"></div>
+
+        <div class="stats">
+            <div class="stat-card">Richtig<br><strong id="counter-correct">0</strong></div>
+            <div class="stat-card">Falsch<br><strong id="counter-incorrect">0</strong></div>
+            <div class="stat-card">Gesamt<br><strong id="counter-total">0</strong></div>
+            <div class="stat-card">Note<br><strong id="current-grade">-</strong></div>
+        </div>
+
+        <div id="user-results-section" class="user-results-section"></div>
+    </div>
+
     <script src="categories.js"></script>
     <script src="script.js"></script>
-
 </body>
 </html>
