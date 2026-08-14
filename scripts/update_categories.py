@@ -107,10 +107,15 @@ def try_git_commit():
     try:
         subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], check=True)
         subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], check=True)
+        # Stage all picture changes (adds, deletes, moves) and the categories file so
+        # the resulting commit/PR includes image file updates as well as the index.
+        subprocess.run(['git', 'add', '-A'], check=True)
         subprocess.run(['git', 'add', str(CATEGORIES_FILE)], check=True)
+        # Show staged files for CI logs
+        subprocess.run(['git', 'status', '--porcelain'], check=True)
         subprocess.run(['git', 'commit', '-m', 'chore: update categories.js from pics/ (CI)'], check=True)
         subprocess.run(['git', 'push'], check=True)
-        print('Committed and pushed changes')
+        print('Committed and pushed categories.js and pics/ changes')
     except Exception as e:
         print('Git commit/push failed:', e)
 
