@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import unicodedata
 import re
 import subprocess
@@ -125,8 +126,9 @@ def main():
 
     CATEGORIES_FILE.write_text(new_content, encoding='utf8')
     print('Updated categories.js')
-    # try to commit (CI will have credentials)
-    try_git_commit()
+    # try to commit only if explicitly allowed (DO_GIT=1).
+    if os.environ.get('DO_GIT') == '1':
+        try_git_commit()
     return 0
 
 if __name__ == '__main__':
