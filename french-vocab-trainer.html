@@ -270,6 +270,7 @@
                     <option value="spices">Les épices</option>
                     <option value="herbs">Les herbes aromatiques</option>
                     <option value="inner_organs">Les organes internes</option>
+                    <option value="dishes">Les couverts les verres et la vaisselle</option>
                 </select>
             </label>
 
@@ -435,6 +436,38 @@
             "pics/les organes internes/les reins.png"
         ];
 
+        const dishes = [
+            "pics/les couverts les verres et la vaisselle/l'assiette creuse.png",
+            "pics/les couverts les verres et la vaisselle/l'assiette plate.png",
+            "pics/les couverts les verres et la vaisselle/l'assiette à dessert.png",
+            "pics/les couverts les verres et la vaisselle/la cuillère à café.png",
+            "pics/les couverts les verres et la vaisselle/la cuillère.png",
+            "pics/les couverts les verres et la vaisselle/la fourchette à dessert.png",
+            "pics/les couverts les verres et la vaisselle/la fourchette.png",
+            "pics/les couverts les verres et la vaisselle/la louche.png",
+            "pics/les couverts les verres et la vaisselle/la petite assiette.png",
+            "pics/les couverts les verres et la vaisselle/la pince à servir.png",
+            "pics/les couverts les verres et la vaisselle/la salière.png",
+            "pics/les couverts les verres et la vaisselle/la saucière.png",
+            "pics/les couverts les verres et la vaisselle/la soupière.png",
+            "pics/les couverts les verres et la vaisselle/la tasse à expresso.png",
+            "pics/les couverts les verres et la vaisselle/la tasse.png",
+            "pics/les couverts les verres et la vaisselle/le bol à bouillon.png",
+            "pics/les couverts les verres et la vaisselle/le bol.png",
+            "pics/les couverts les verres et la vaisselle/le couteau.png",
+            "pics/les couverts les verres et la vaisselle/le gobelet.png",
+            "pics/les couverts les verres et la vaisselle/le plat caré.png",
+            "pics/les couverts les verres et la vaisselle/le plat ovale.png",
+            "pics/les couverts les verres et la vaisselle/le plat rectangulaire.png",
+            "pics/les couverts les verres et la vaisselle/le plat à compartiments.png",
+            "pics/les couverts les verres et la vaisselle/le poivrier.png",
+            "pics/les couverts les verres et la vaisselle/le pot à lait.png",
+            "pics/les couverts les verres et la vaisselle/le saladier.png",
+            "pics/les couverts les verres et la vaisselle/le sucrier.png",
+            "pics/les couverts les verres et la vaisselle/le verre.png",
+            "pics/les couverts les verres et la vaisselle/les couverts les verres et la vaisselle.png"
+        ];
+
         let currentCategory = "all";
         let currentMode = "learning";
         let correctCount = 0;
@@ -482,8 +515,11 @@
             }
             if (selection === "inner_organs") {
                 return [...inner_organs];
+            }
+            if (selection === "dishes") {
+                return [...dishes];
             }   
-            return [...legumes, ...fruits, ...spices, ...herbs, ...inner_organs];
+            return [...legumes, ...fruits, ...spices, ...herbs, ...inner_organs, ...dishes];
         }
 
         function getStorageKey() {
