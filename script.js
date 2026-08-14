@@ -547,7 +547,31 @@ function clearCurrentUserResults() {
 
 function bindControls() {
     categorySelect = document.getElementById("category-select");
-    categorySelect.addEventListener("change", selectCategory);
+    if (categorySelect) {
+        // Populate options dynamically from CATEGORIES
+        categorySelect.innerHTML = '';
+        const optAll = document.createElement('option');
+        optAll.value = 'all';
+        optAll.textContent = 'Alle Kategorien';
+        categorySelect.appendChild(optAll);
+
+        if (typeof CATEGORIES !== 'undefined' && CATEGORIES) {
+            Object.keys(CATEGORIES).sort().forEach((key) => {
+                const entries = CATEGORIES[key];
+                if (!entries || !entries.length) return;
+                // derive display label from folder name in the first path: pics/<folder>/file
+                const parts = entries[0].split('/');
+                const folder = parts[1] || key;
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = folder;
+                categorySelect.appendChild(opt);
+            });
+        }
+
+        categorySelect.value = currentCategory || 'all';
+        categorySelect.addEventListener("change", selectCategory);
+    }
 
     usernameInput = document.getElementById("username-input");
     usernameInput.value = localStorage.getItem("vokabeltrainer-last-username") || "";
