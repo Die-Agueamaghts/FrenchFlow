@@ -1,15 +1,55 @@
+:root {
+  --page-background: #f4f4f9;
+  --surface: #fff;
+  --text: #333;
+  --border: #ccc;
+  --muted-surface: #f8fafc;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f9;
-  color: #333;
+  background: var(--page-background);
+  color: var(--text);
   margin: 0;
-  padding: 20px;
+  padding: 72px 20px 20px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+body.dark-mode {
+  --page-background: #111827;
+  --surface: #1f2937;
+  --text: #e5e7eb;
+  --border: #4b5563;
+  --muted-surface: #273449;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+.theme-toggle:hover {
+  background: var(--muted-surface);
 }
 
 .container {
   max-width: 700px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--surface);
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
@@ -38,7 +78,7 @@ button {
   font-size: 16px;
   padding: 10px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
 }
 
 button {
@@ -162,7 +202,7 @@ button:hover {
 }
 
 .stat-card {
-  background: #f8fafc;
+  background: var(--muted-surface);
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 10px;
@@ -191,7 +231,7 @@ button:hover {
 }
 
 .results-card {
-  background: #f8fafc;
+  background: var(--muted-surface);
   border: 1px solid #dbeafe;
   border-radius: 10px;
   padding: 20px;
@@ -241,7 +281,7 @@ button:hover {
   flex-wrap: wrap;
   gap: 10px;
   padding: 10px 12px;
-  background: #f8fafc;
+  background: var(--muted-surface);
   border: 1px solid #e5e7eb;
   border-radius: 8px;
 }
@@ -250,4 +290,35 @@ button:hover {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+body.dark-mode select,
+body.dark-mode input[type="text"] {
+  background: #273449;
+  color: #e5e7eb;
+}
+
+body.dark-mode .options,
+body.dark-mode #game-area.mode-learning,
+body.dark-mode #game-area.mode-testing {
+  background: #1b2638;
+  border-color: #40516a;
+}
+
+body.dark-mode #image-display,
+body.dark-mode .stat-card,
+body.dark-mode .results-card,
+body.dark-mode .user-results-item {
+  background: var(--muted-surface);
+  border-color: #40516a;
+}
+
+body.dark-mode .mode-banner.learning {
+  background: #263f63;
+  color: #bfdbfe;
+}
+
+body.dark-mode .mode-banner.testing {
+  background: #59451e;
+  color: #fde68a;
 }

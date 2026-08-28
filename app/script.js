@@ -1,4 +1,5 @@
 const CATEGORIES = window.CATEGORIES || {};
+const THEME_STORAGE_KEY = "frenchflow-theme";
 
 // expose category arrays as before for backward compatibility
 const { legumes, fruits, spices, herbs, inner_organs, dishes } =
@@ -35,6 +36,31 @@ let usernameInput;
 let userResultsSection;
 let showResultsButton;
 let clearResultsButton;
+
+function setTheme(isDarkMode) {
+  document.body.classList.toggle("dark-mode", isDarkMode);
+  const themeToggle = document.getElementById("theme-toggle");
+  if (!themeToggle) return;
+
+  const icon = themeToggle.querySelector("span");
+  icon.textContent = isDarkMode ? "☀" : "☾";
+  const label = isDarkMode ? "Hellmodus aktivieren" : "Nachtmodus aktivieren";
+  themeToggle.setAttribute("aria-label", label);
+  themeToggle.setAttribute("title", label);
+}
+
+function bindThemeToggle() {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (!themeToggle) return;
+
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+  setTheme(savedTheme === "dark");
+  themeToggle.addEventListener("click", () => {
+    const isDarkMode = !document.body.classList.contains("dark-mode");
+    setTheme(isDarkMode);
+    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? "dark" : "light");
+  });
+}
 
 function getImagesForCategory(selection) {
   if (selection && selection !== "all" && CATEGORIES && CATEGORIES[selection]) {
@@ -669,6 +695,7 @@ function bindControls() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  bindThemeToggle();
   bindControls();
   startNewSession();
 });
