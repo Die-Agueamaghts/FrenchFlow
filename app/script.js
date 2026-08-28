@@ -1,8 +1,4 @@
-if (typeof CATEGORIES === "undefined") {
-  console.error(
-    "CATEGORIES is not defined. Include categories.js before script.js",
-  );
-}
+const CATEGORIES = window.CATEGORIES || {};
 
 // expose category arrays as before for backward compatibility
 const { legumes, fruits, spices, herbs, inner_organs, dishes } =

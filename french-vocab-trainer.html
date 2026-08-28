@@ -1,52 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bild-Vokabeltrainer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h1>Vokabeltrainer</h1>
+      <h1>Vokabeltrainer</h1>
 
-        <div class="options">
-            <label>
-                Benutzername:
-                <input type="text" id="username-input" placeholder="Dein Name" autocomplete="off">
-            </label>
+      <div class="options">
+        <label>
+          Benutzername:
+          <input
+            type="text"
+            id="username-input"
+            placeholder="Dein Name"
+            autocomplete="off"
+          />
+        </label>
 
-            <label>
-                Kategorie:
-                <select id="category-select"></select>
-            </label>
+        <label>
+          Kategorie:
+          <select id="category-select"></select>
+        </label>
 
-            <div class="mode-group">
-                <label><input type="radio" name="mode" value="learning" checked> Lernen</label>
-                <label><input type="radio" name="mode" value="testing"> Test</label>
-            </div>
-
-            <div class="control-row">
-                <button id="finish-button" class="btn-secondary">Beenden</button>
-                <button id="reset-button" class="btn-secondary">Zurücksetzen</button>
-                <button id="show-results-button" class="btn-secondary">Ergebnisse</button>
-                <button id="clear-results-button" class="btn-secondary">Löschen</button>
-            </div>
+        <div class="mode-group">
+          <label
+            ><input type="radio" name="mode" value="learning" checked />
+            Lernen</label
+          >
+          <label><input type="radio" name="mode" value="testing" /> Test</label>
         </div>
 
-        <div id="game-area"></div>
-
-        <div class="stats">
-            <div class="stat-card">Richtig<br><strong id="counter-correct">0</strong></div>
-            <div class="stat-card">Falsch<br><strong id="counter-incorrect">0</strong></div>
-            <div class="stat-card">Gesamt<br><strong id="counter-total">0</strong></div>
-            <div class="stat-card">Note<br><strong id="current-grade">-</strong></div>
+        <div class="control-row">
+          <button id="finish-button" class="btn-secondary">Beenden</button>
+          <button id="reset-button" class="btn-secondary">Zurücksetzen</button>
+          <button id="show-results-button" class="btn-secondary">
+            Ergebnisse
+          </button>
+          <button id="clear-results-button" class="btn-secondary">
+            Löschen
+          </button>
         </div>
+      </div>
 
-        <div id="user-results-section" class="user-results-section"></div>
+      <div id="game-area"></div>
+
+      <div class="stats">
+        <div class="stat-card">
+          Richtig<br /><strong id="counter-correct">0</strong>
+        </div>
+        <div class="stat-card">
+          Falsch<br /><strong id="counter-incorrect">0</strong>
+        </div>
+        <div class="stat-card">
+          Gesamt<br /><strong id="counter-total">0</strong>
+        </div>
+        <div class="stat-card">
+          Note<br /><strong id="current-grade">-</strong>
+        </div>
+      </div>
+
+      <div id="user-results-section" class="user-results-section"></div>
     </div>
 
-    <script src="categories.js"></script>
-    <script src="script.js"></script>
-</body>
+    <script src="data/couverts-verres-vaisselle.js"></script>
+    <script src="data/fruits.js"></script>
+    <script src="data/herbes-aromatiques.js"></script>
+    <script src="data/organes-internes.js"></script>
+    <script src="data/legumes.js"></script>
+    <script src="data/legumineuses.js"></script>
+    <script src="data/metiers-manuels.js"></script>
+    <script src="data/moyens-de-transport.js"></script>
+    <script src="data/ustensiles-de-cuisine.js"></script>
+    <script src="data/epices.js"></script>
+    <script src="app/script.js"></script>
+  </body>
 </html>
